@@ -49,15 +49,88 @@
       />
       <input type="submit" value="Submit guess" class="guessSubmit" />
     </div>
-
+    <!-- div는 게임을 초기화 할 때 세 항목을 모두 선택하기 위함 -->
     <div class="resultParas">
+      <!-- 입력한 숫자, 맞춤 여부 , 틀렸을 때 증감결과 -->
       <p class="guesses"></p>
       <p class="lastResult"></p>
       <p class="lowOrHi"></p>
     </div>
 
     <script>
-      // Your JavaScript goes here
+      //랜덤한 숫자를 변수로 설정
+      let randomNumber = Math.floor(Math.random() * 100) + 1;
+      const guesses = document.querySelector(".guesses");
+      const lastResult = document.querySelector(".lastResult");
+      const lowOrHi = document.querySelector(".lowOrHi");
+      //숫자를 입력하는 input, 버튼 역할의 input
+      const guessFiled = document.querySelector(".guessField");
+      const guessSubmit = document.querySelector(".guessSubmit");
+
+      //   유저가 입력한 시도 횟수
+      let guessCount = 1;
+      let resetButton;
+
+      const checkGuess = () => {
+        const userGuess = Number(guessField.value);
+        if (guessCount === 1) {
+          guesses.textContent = "고른 이전 숫자";
+        }
+        guesses.textContent += userGuess + " ";
+
+        if (userGuess === randomNumber) {
+          lastResult.textContent = "정답입니다! 축하합니다!";
+          lastResult.style.backgroundColor = "green";
+          lowOrHi.textContent = "";
+          setGameOver();
+        } else if (guessCount === 10) {
+          lastResult.textContent = "정해진 횟수에 도달했습니다 ㅠ_ㅠ";
+          setGameOver();
+        } else {
+          lastResult.textContent = "오답입니다 X ";
+          lastResult.style.backgroundColor = "red";
+          if (userGuess > randomNumber) {
+            lastResult.textContent = "선택한 숫자가 정답보다 큽니다";
+          } else if (userGuess < randomNumber) {
+            lastResult.textContent = "선택한 숫자가 정답보다 작습니다";
+          }
+        }
+
+        guessCount++;
+        guessFiled = "";
+        guessFiled.focus();
+      };
+
+      guessSubmit.addEventListener("click", checkGuess);
+
+      const setGameOver = () => {
+        // 입력창과 버튼을 모두 disabled상태로 만듬
+        guessField.disabled = true;
+        guessSubmit.disabled = true;
+        //게임이 종료되면 리셋버튼을 생성하고 document에 추가한다.
+        resetButton = document.createElement("button");
+        resetButton.textContent = "새 게임 시작하기";
+        document.body.appendChild(resetButton);
+        resetButton.addEventListener("click", resetGame);
+      };
+
+      const resetGame = () => {
+        guessCount = 1;
+        //className이 resultParas 안에 있는 p들을 모두 선택
+        const resetParas = document.querySelectorAll(".resultParas p ");
+        //resetParas안에 있는 요소들을 돌면서 나타냄
+        for (const reset of resetParas) {
+          reset.textContent = "";
+        }
+
+        resetButton.parentNode.removeChild(resetButton);
+        guessField.disabled = false;
+        guessSubmit.disabled = false;
+        guessField.value = "";
+        guessField.focus();
+        lastResult.style.backgroundColor = "white";
+        randomNumber = Math.floor(Math.random() * 100) + 1;
+      };
     </script>
   </body>
 </html>
